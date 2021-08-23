@@ -78,6 +78,7 @@ public class DelaunayTerrain : MonoBehaviour {
         
         bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 2.0f);
 
+        int e = 0;
         // Sample perlin noise to get elevations
         foreach (Vertex vert in mesh.Vertices) {
             float elevation = 0.0f;
@@ -98,6 +99,12 @@ public class DelaunayTerrain : MonoBehaviour {
 
             //elevation = 0;
             //elevationScale = 1f;
+            if (e < sampler.activeHeight.Count)
+            {
+                Debug.Log(e + " : " + sampler.activeHeight[e] + " : " + sampler.activeHeight.Count);
+                elevation += sampler.activeHeight[e];
+                e++;
+            }
             elevations.Add(elevation * elevationScale);
         }
 

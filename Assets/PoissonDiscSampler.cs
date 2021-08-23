@@ -30,6 +30,7 @@ public class PoissonDiscSampler
     private readonly float cellSize;
     private Vector2[,] grid;
     private  List<Vector2> activeSamples = new List<Vector2>();
+    public List<float> activeHeight = new List<float>();
 
     /// Create a sampler with the following parameters:
     ///
@@ -58,6 +59,7 @@ public class PoissonDiscSampler
         // First sample is choosen randomly
         //yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
         yield return AddSample(new Vector2(rect.width / 2, rect.height / 2));
+        activeHeight.Add(0f);
 
         while (activeSamples.Count > 0) {
 
@@ -75,6 +77,7 @@ public class PoissonDiscSampler
 
                 // Accept candidates if it's inside the rect and farther than 2 * radius to any existing sample.
                 bool cull = false;
+                float height = 0f;
                 switch (Shape)
                 {
                     case 0:
@@ -84,6 +87,14 @@ public class PoissonDiscSampler
                         cull = Vector2.Distance(candidate, offset) < radius;
                         break;
                     default:
+                        cull = rect.Contains(candidate);
+                        if (cull)
+                        {
+                            if (Vector2.Distance(candidate, offset) > radius)
+                            {
+                                height -= 0.1f;
+                            }
+                        }
                         break;
                 }
                 if (cull && IsFarEnough(candidate))
@@ -91,6 +102,8 @@ public class PoissonDiscSampler
                     //Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius + " : " + rect);
                     //Debug.Log(j + ":" + k + "-" + activeSamples.Count);
                     found = true;
+                    activeHeight.Add(height);
+                    Debug.Log(j + " : " + height + " : " + activeHeight.Count);
                     yield return AddSample(candidate);
                     break;
                 }
