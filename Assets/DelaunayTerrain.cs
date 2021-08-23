@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using TriangleNet.Geometry;
 using TriangleNet.Topology;
+using UnityEngine;
 
 public class DelaunayTerrain : MonoBehaviour {
     // Maximum size of the terrain.
@@ -63,6 +63,7 @@ public class DelaunayTerrain : MonoBehaviour {
         // Add uniformly-spaced points
         foreach (Vector2 sample in sampler.Samples()) {
             polygon.Add(new Vertex((double)sample.x, (double)sample.y));
+            Debug.Log("polygon count : " + polygon.Count);
         }
 
         // Add some randomly sampled points
@@ -92,6 +93,9 @@ public class DelaunayTerrain : MonoBehaviour {
             }
 
             elevation = elevation / maxVal;
+
+            //elevation = 0;
+            //elevationScale = 1f;
             elevations.Add(elevation * elevationScale);
         }
 
@@ -146,6 +150,8 @@ public class DelaunayTerrain : MonoBehaviour {
             chunkMesh.uv = uvs.ToArray();
             chunkMesh.triangles = triangles.ToArray();
             chunkMesh.normals = normals.ToArray();
+
+            //chunkMesh.Optimize();
 
             Transform chunk = Instantiate<Transform>(chunkPrefab, transform.position, transform.rotation);
             chunk.GetComponent<MeshFilter>().mesh = chunkMesh;
