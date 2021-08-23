@@ -57,8 +57,9 @@ public class PoissonDiscSampler
     {
         Vector3 v = Random.onUnitSphere * radius;
         // First sample is choosen randomly
-        yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
-        
+        //yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
+        yield return AddSample(new Vector2(rect.width / 2, rect.height / 2));
+
         Debug.Log(true + " : " + radius);
         while (activeSamples.Count > 0)
         {
@@ -72,24 +73,25 @@ public class PoissonDiscSampler
             for (int j = 0; j < k; ++j) {
 
                 float angle = 2 * Mathf.PI * Random.value;
-                float r = Mathf.Sqrt(Random.value * 3 * radius2 + radius2); // See: http://stackoverflow.com/questions/9048095/create-random-number-within-an-annulus/9048443#9048443
+                float r = Mathf.Sqrt(Random.value * 1f * (radius2 + radius2)); // See: http://stackoverflow.com/questions/9048095/create-random-number-within-an-annulus/9048443#9048443
                 Vector2 candidate = sample + r * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
-                //Debug.Log(Vector2.Distance(candidate, offset) + " : " + radius);
+                Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius);
                 // Accept candidates if it's inside the rect and farther than 2 * radius to any existing sample.
-                if (rect.Contains(candidate) && /*IsFarEnough(candidate)*/ p < 30000 && Vector2.Distance(candidate, offset) < radius)
+                Debug.Log(rect);
+                if (rect.Contains(candidate) && /*IsFarEnough(candidate)*/ p < 10000 && Vector2.Distance(candidate, offset) < radius)
                 {
                     //Debug.Log(true + " : " + radius);
                     found = true;
                     p++;
-                    Debug.Log(j + ":" + k + "-" + activeSamples.Count);
+                    //Debug.Log(j + ":" + k + "-" + activeSamples.Count);
                     yield return AddSample(candidate);
                     break;
                 }
                 //Debug.Log(activeSamples.Count);
             }
 
-            Debug.Log("break:" + k + "-" + activeSamples.Count);
+            //Debug.Log("break:" + k + "-" + activeSamples.Count);
             //Debug.Log(true + " : " + radius);
             // If we couldn't find a valid candidate after k attempts, remove this sample from the active samples queue
             if (!found) {
