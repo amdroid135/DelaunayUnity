@@ -40,6 +40,8 @@ public class DelaunayTerrain : MonoBehaviour {
     // The delaunay mesh
     private TriangleNet.Mesh mesh = null;
 
+    public int Shape = 0;
+
     void Start()
     {
         Generate();
@@ -61,7 +63,7 @@ public class DelaunayTerrain : MonoBehaviour {
         Polygon polygon = new Polygon();
 
         // Add uniformly-spaced points
-        foreach (Vector2 sample in sampler.Samples()) {
+        foreach (Vector2 sample in sampler.Samples(Shape)) {
             polygon.Add(new Vertex((double)sample.x, (double)sample.y));
             Debug.Log("polygon count : " + polygon.Count);
         }

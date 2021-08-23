@@ -41,28 +41,25 @@ public class PoissonDiscSampler
         rect = new Rect(0, 0, width, height);
 
         offset = new Vector2(x: width / 2, y: height / 2);
-        this.radius = width * height / 2;
+        this.radius = width > height ? width / 2 : height / 2;
+        Debug.Log(true + " : " + radius);
 
         radius2 = radius * radius;
-        cellSize = radius / Mathf.Sqrt(2) * 0.01f;
+        cellSize = radius / Mathf.Sqrt(2);// * 0.01f;
         grid = new Vector2[Mathf.CeilToInt(width / cellSize),
                            Mathf.CeilToInt(height / cellSize)];
     }
 
-    private static int p = 0;
-
     /// Return a lazy sequence of samples. You typically want to call this in a foreach loop, like so:
     ///   foreach (Vector2 sample in sampler.Samples()) { ... }
-    public IEnumerable<Vector2> Samples()
+    public IEnumerable<Vector2> Samples(int Shape = 0)
     {
-        Vector3 v = Random.onUnitSphere * radius;
+        //Vector3 v = Random.onUnitSphere * radius;
         // First sample is choosen randomly
         //yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
         yield return AddSample(new Vector2(rect.width / 2, rect.height / 2));
 
-        Debug.Log(true + " : " + radius);
-        while (activeSamples.Count > 0)
-        {
+        while (activeSamples.Count > 0) {
 
             // Pick a random active sample
             int i = (int) Random.value * activeSamples.Count;
@@ -76,23 +73,30 @@ public class PoissonDiscSampler
                 float r = Mathf.Sqrt(Random.value * 3 * (radius2 + radius2)); // See: http://stackoverflow.com/questions/9048095/create-random-number-within-an-annulus/9048443#9048443
                 Vector2 candidate = sample + r * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
-                Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius);
                 // Accept candidates if it's inside the rect and farther than 2 * radius to any existing sample.
-                Debug.Log(rect);
-                if (rect.Contains(candidate) && /*IsFarEnough(candidate)*/ p < 10000 && Vector2.Distance(candidate, offset) < radius)
+                bool cull = false;
+                switch (Shape)
                 {
-                    //Debug.Log(true + " : " + radius);
-                    found = true;
-                    p++;
+                    case 0:
+                        cull = rect.Contains(candidate);
+                        break;
+                    case 1:
+                        cull = Vector2.Distance(candidate, offset) < radius;
+                        break;
+                    default:
+                        break;
+                }
+                if (cull && IsFarEnough(candidate))
+                {
+                    //Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius + " : " + rect);
                     //Debug.Log(j + ":" + k + "-" + activeSamples.Count);
+                    found = true;
                     yield return AddSample(candidate);
                     break;
                 }
-                //Debug.Log(activeSamples.Count);
             }
 
-            //Debug.Log("break:" + k + "-" + activeSamples.Count);
-            //Debug.Log(true + " : " + radius);
+            //Debug.Log("break:" + k + "-" + activeSamples.Count + " : " + radius);
             // If we couldn't find a valid candidate after k attempts, remove this sample from the active samples queue
             if (!found) {
                 activeSamples[i] = activeSamples[activeSamples.Count - 1];
