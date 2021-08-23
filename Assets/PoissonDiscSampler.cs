@@ -23,6 +23,8 @@ public class PoissonDiscSampler
 {
     private const int k = 30;  // Maximum number of attempts before marking a sample as inactive.
 
+    private readonly Vector2 offset;
+    private readonly float radius;
     private readonly Rect rect;
     private readonly float radius2;  // radius squared
     private readonly float cellSize;
@@ -37,18 +39,25 @@ public class PoissonDiscSampler
     public PoissonDiscSampler(float width, float height, float radius)
     {
         rect = new Rect(0, 0, width, height);
+
+        offset = new Vector2(x: width / 2, y: height / 2);
+        this.radius = width > height ? width / 2 : height / 2;
+        Debug.Log(true + " : " + radius);
+
         radius2 = radius * radius;
-        cellSize = radius / Mathf.Sqrt(2);
+        cellSize = radius / Mathf.Sqrt(2);// * 0.01f;
         grid = new Vector2[Mathf.CeilToInt(width / cellSize),
                            Mathf.CeilToInt(height / cellSize)];
     }
 
     /// Return a lazy sequence of samples. You typically want to call this in a foreach loop, like so:
     ///   foreach (Vector2 sample in sampler.Samples()) { ... }
-    public IEnumerable<Vector2> Samples()
+    public IEnumerable<Vector2> Samples(int Shape = 0)
     {
+        //Vector3 v = Random.onUnitSphere * radius;
         // First sample is choosen randomly
-        yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
+        //yield return AddSample(new Vector2(Random.value * rect.width, Random.value * rect.height));
+        yield return AddSample(new Vector2(rect.width / 2, rect.height / 2));
 
         while (activeSamples.Count > 0) {
 
@@ -65,19 +74,36 @@ public class PoissonDiscSampler
                 Vector2 candidate = sample + r * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
                 // Accept candidates if it's inside the rect and farther than 2 * radius to any existing sample.
-                if (rect.Contains(candidate) && IsFarEnough(candidate)) {
+                bool cull = false;
+                switch (Shape)
+                {
+                    case 0:
+                        cull = rect.Contains(candidate);
+                        break;
+                    case 1:
+                        cull = Vector2.Distance(candidate, offset) < radius;
+                        break;
+                    default:
+                        break;
+                }
+                if (cull && IsFarEnough(candidate))
+                {
+                    //Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius + " : " + rect);
+                    //Debug.Log(j + ":" + k + "-" + activeSamples.Count);
                     found = true;
                     yield return AddSample(candidate);
                     break;
                 }
             }
 
+            //Debug.Log("break:" + k + "-" + activeSamples.Count + " : " + radius);
             // If we couldn't find a valid candidate after k attempts, remove this sample from the active samples queue
             if (!found) {
                 activeSamples[i] = activeSamples[activeSamples.Count - 1];
                 activeSamples.RemoveAt(activeSamples.Count - 1);
             }
         }
+        Debug.Log("while break");
     }
 
     private bool IsFarEnough(Vector2 sample)
