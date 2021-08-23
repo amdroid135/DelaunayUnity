@@ -73,7 +73,7 @@ public class PoissonDiscSampler
             for (int j = 0; j < k; ++j) {
 
                 float angle = 2 * Mathf.PI * Random.value;
-                float r = Mathf.Sqrt(Random.value * 1f * (radius2 + radius2)); // See: http://stackoverflow.com/questions/9048095/create-random-number-within-an-annulus/9048443#9048443
+                float r = Mathf.Sqrt(Random.value * 3 * (radius2 + radius2)); // See: http://stackoverflow.com/questions/9048095/create-random-number-within-an-annulus/9048443#9048443
                 Vector2 candidate = sample + r * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 
                 Debug.Log(candidate + " : " + offset + " : " + Vector2.Distance(candidate, offset) + " : " + radius);
