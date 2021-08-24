@@ -14,7 +14,7 @@ public class PointCreater : MonoBehaviour
 
     public List<Vector3> verties;
 
-    void Start()
+    void Awake()
     {
         //meshFilter = GetComponent<MeshFilter>();
 

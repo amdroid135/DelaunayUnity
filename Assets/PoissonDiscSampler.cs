@@ -86,7 +86,7 @@ public class PoissonDiscSampler
                     case 1:
                         cull = Vector2.Distance(candidate, offset) < radius;
                         break;
-                    default:
+                    case 2:
                         cull = rect.Contains(candidate);
                         if (cull)
                         {
@@ -95,6 +95,8 @@ public class PoissonDiscSampler
                                 height -= 0.1f;
                             }
                         }
+                        break;
+                    default:
                         break;
                 }
                 if (cull && IsFarEnough(candidate))

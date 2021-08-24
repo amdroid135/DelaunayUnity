@@ -44,7 +44,28 @@ public class DelaunayTerrain : MonoBehaviour {
 
     void Start()
     {
-        Generate();
+        Generate2();
+    }
+
+    public virtual void Generate2()
+    {
+        Polygon polygon = new Polygon();
+
+        elevations = new List<float>();
+
+        foreach (Vector3 v in GameObject.Find("PointCreater").GetComponent<PointCreater>().verties)
+        {
+            polygon.Add(new Vertex(v.x, v.z));
+            Debug.Log(v);
+            elevations.Add(v.y);
+        }
+
+        TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = false };
+        mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
+
+        bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 2.0f);
+
+        MakeMesh();
     }
 
     public virtual void Generate() {
