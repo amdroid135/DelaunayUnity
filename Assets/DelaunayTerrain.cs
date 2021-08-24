@@ -56,7 +56,7 @@ public class DelaunayTerrain : MonoBehaviour {
         foreach (Vector3 v in GameObject.Find("PointCreater").GetComponent<PointCreater>().verties)
         {
             polygon.Add(new Vertex(v.x, v.z));
-            Debug.Log(v);
+            //Debug.Log(v);
             elevations.Add(v.y);
         }
 
