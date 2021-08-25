@@ -32,10 +32,22 @@ public class PointCreater : MonoBehaviour
             string[] values = lines[i].Split(',');
             if (values.Length != 3)
                 continue;
-            verties.Add(new Vector3(float.Parse(values[0]),
-                float.Parse(values[1]), float.Parse(values[2])));
-            indexes.Add(k++);
+            if (float.Parse(values[1]) == 0f)
+            {
+                Debug.Log(verties.Count - 1 + " : " + values[1]);
+                continue;
+            }
+            for (int x = 0; x < 226; x++)
+            {
+                verties.Add(new Vector3(float.Parse(values[0]),
+                    float.Parse(values[1]), float.Parse(values[2])));
+                indexes.Add(k++);
+            }
+            Debug.Log(verties.Count);
+            Debug.Break();
         }
+
+        GameObject.Find("Terrain Circle").GetComponent<DelaunayTerrain>().start = true;
 
         //meshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         //meshFilter.mesh.SetVertices(verties);

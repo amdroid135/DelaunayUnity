@@ -41,29 +41,39 @@ public class DelaunayTerrain : MonoBehaviour {
     private TriangleNet.Mesh mesh = null;
 
     public int Shape = 0;
+    public bool start = false;
 
-    void Start()
+    void Update()
     {
-        Generate2();
+        if (start)
+        {
+            start = false;
+            Generate2();
+        }
     }
 
     public virtual void Generate2()
     {
+        float t = Time.realtimeSinceStartup;
+
         Polygon polygon = new Polygon();
 
         elevations = new List<float>();
 
+        float y = 50;
         foreach (Vector3 v in GameObject.Find("PointCreater").GetComponent<PointCreater>().verties)
         {
             polygon.Add(new Vertex(v.x, v.z));
             //Debug.Log(v);
-            elevations.Add(v.y);
+            elevations.Add(v.y - y);
         }
 
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = false };
         mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
 
-        bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 2.0f);
+        bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 1.0f);
+
+        Debug.Log(Time.realtimeSinceStartup - t);
 
         MakeMesh();
     }
@@ -129,9 +139,9 @@ public class DelaunayTerrain : MonoBehaviour {
             elevations.Add(elevation * elevationScale);
         }
 
-        MakeMesh();
+        //MakeMesh();
 
-        ScatterDetailMeshes();
+        //ScatterDetailMeshes();
     }
     
     public void MakeMesh() {
