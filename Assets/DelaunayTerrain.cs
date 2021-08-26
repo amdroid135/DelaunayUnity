@@ -68,14 +68,22 @@ public class DelaunayTerrain : MonoBehaviour {
             elevations.Add(v.y - y);
         }
 
+        Debug.Log("point scrap " + (Time.realtimeSinceStartup - t));
+        t = Time.realtimeSinceStartup;
+
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = false };
         mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
 
         bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 1.0f);
 
-        Debug.Log(Time.realtimeSinceStartup - t);
+        Debug.Log("delaunay " + (Time.realtimeSinceStartup - t));
+        Debug.Log(mesh.triangles.Count + " : " + mesh.vertices.Count);
+        t = Time.realtimeSinceStartup;
 
-        MakeMesh();
+        MakeMesh(false);
+
+        Debug.Log("total time " + (Time.realtimeSinceStartup - t));
+        Debug.Log("total size " + total_size);
     }
 
     public virtual void Generate() {
@@ -143,8 +151,10 @@ public class DelaunayTerrain : MonoBehaviour {
 
         //ScatterDetailMeshes();
     }
-    
-    public void MakeMesh() {
+
+    float total_size = 0;
+
+    public void MakeMesh(bool instancing = true) {
         IEnumerator<Triangle> triangleEnumerator = mesh.Triangles.GetEnumerator();
 
         for (int chunkStart = 0; chunkStart < mesh.Triangles.Count; chunkStart += trianglesInChunk) {
@@ -183,20 +193,25 @@ public class DelaunayTerrain : MonoBehaviour {
                 uvs.Add(new Vector2(0.0f, 0.0f));
                 uvs.Add(new Vector2(0.0f, 0.0f));
                 uvs.Add(new Vector2(0.0f, 0.0f));
+
+                total_size += normal.magnitude / 2;
             }
 
-            Mesh chunkMesh = new Mesh();
-            chunkMesh.vertices = vertices.ToArray();
-            chunkMesh.uv = uvs.ToArray();
-            chunkMesh.triangles = triangles.ToArray();
-            chunkMesh.normals = normals.ToArray();
+            if (instancing)
+            {
+                Mesh chunkMesh = new Mesh();
+                chunkMesh.vertices = vertices.ToArray();
+                chunkMesh.uv = uvs.ToArray();
+                chunkMesh.triangles = triangles.ToArray();
+                chunkMesh.normals = normals.ToArray();
 
-            //chunkMesh.Optimize();
+                //chunkMesh.Optimize();
 
-            Transform chunk = Instantiate<Transform>(chunkPrefab, transform.position, transform.rotation);
-            chunk.GetComponent<MeshFilter>().mesh = chunkMesh;
-            chunk.GetComponent<MeshCollider>().sharedMesh = chunkMesh;
-            chunk.transform.parent = transform;
+                Transform chunk = Instantiate<Transform>(chunkPrefab, transform.position, transform.rotation);
+                chunk.GetComponent<MeshFilter>().mesh = chunkMesh;
+                chunk.GetComponent<MeshCollider>().sharedMesh = chunkMesh;
+                chunk.transform.parent = transform;
+            }
         }
     }
 
