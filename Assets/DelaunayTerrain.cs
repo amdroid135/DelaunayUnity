@@ -41,7 +41,7 @@ public class DelaunayTerrain : MonoBehaviour {
     private TriangleNet.Mesh mesh = null;
 
     public int Shape = 0;
-    public bool start = false;
+    public bool start = false, instancing = false;
 
     void Update()
     {
@@ -61,7 +61,9 @@ public class DelaunayTerrain : MonoBehaviour {
         elevations = new List<float>();
 
         float y = 50;
-        foreach (Vector3 v in GameObject.Find("PointCreater").GetComponent<PointCreater>().verties)
+        foreach (Vector3 v in GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices)
+        //List<Vector3> vertices = GameObject.Find("PointCreater").GetComponent<PointCreater>().verties;
+        //foreach (Vector3 v in vertices)
         {
             polygon.Add(new Vertex(v.x, v.z));
             //Debug.Log(v);
@@ -80,7 +82,7 @@ public class DelaunayTerrain : MonoBehaviour {
         Debug.Log(mesh.triangles.Count + " : " + mesh.vertices.Count);
         t = Time.realtimeSinceStartup;
 
-        MakeMesh(false);
+        MakeMesh(instancing);
 
         Debug.Log("total time " + (Time.realtimeSinceStartup - t));
         Debug.Log("total size " + total_size);
