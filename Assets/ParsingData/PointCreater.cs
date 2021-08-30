@@ -12,6 +12,7 @@ public class PointCreater : MonoBehaviour
     public int jumpIndex = 10;
     public int startIndex = 0;
 
+    [HideInInspector]
     public List<Vector3> vertices;
 
     public bool binary = false;

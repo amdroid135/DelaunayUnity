@@ -61,9 +61,11 @@ public class DelaunayTerrain : MonoBehaviour {
         elevations = new List<float>();
 
         float y = 50;
-        foreach (Vector3 v in GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices)
-        //List<Vector3> vertices = GameObject.Find("PointCreater").GetComponent<PointCreater>().verties;
+        //List<Vector3> vertices = GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices;
         //foreach (Vector3 v in vertices)
+        List<Vector3> vertices = GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices;
+        foreach (Vector3 v in vertices)
+         //for (int i = 0; i < 90; i++)
         {
             polygon.Add(new Vertex(v.x, v.z));
             //Debug.Log(v);
@@ -71,18 +73,23 @@ public class DelaunayTerrain : MonoBehaviour {
         }
 
         Debug.Log("point scrap " + (Time.realtimeSinceStartup - t));
+
+        Debug.Log("start triangulate");
         t = Time.realtimeSinceStartup;
 
         TriangleNet.Meshing.ConstraintOptions options = new TriangleNet.Meshing.ConstraintOptions() { ConformingDelaunay = false };
         mesh = (TriangleNet.Mesh)polygon.Triangulate(options);
+        Debug.Log("end triangulate");
 
+        Debug.Log($"start trianglebin {xsize}, {ysize}, {minPointRadius}");
         bin = new TriangleBin(mesh, xsize, ysize, minPointRadius * 1.0f);
+        Debug.Log("end trianglebin");
 
         Debug.Log("delaunay " + (Time.realtimeSinceStartup - t));
         Debug.Log(mesh.triangles.Count + " : " + mesh.vertices.Count);
         t = Time.realtimeSinceStartup;
 
-        MakeMesh(instancing);
+        //MakeMesh(instancing);
 
         Debug.Log("total time " + (Time.realtimeSinceStartup - t));
         Debug.Log("total size " + total_size);
