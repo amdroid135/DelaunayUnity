@@ -68,7 +68,7 @@ public class DelaunayTerrain : MonoBehaviour {
         {
             polygon.Add(new Vertex(v.x + 1f, v.z + 1f));
             //Debug.Log(v);
-            elevations.Add(v.y - 50f);
+            elevations.Add(v.y);
         }
 
         Debug.Log("point scrap " + (Time.realtimeSinceStartup - t));
