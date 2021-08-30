@@ -31,6 +31,7 @@ public class WriteFileBinary : MonoBehaviour
     {
         points.Clear();
         points = new List<Vector3>(100_000_000);
+        List<Vector3> pointsBin = new List<Vector3>(100_000_000);
 
         if (File.Exists(fileName))
         {
@@ -40,10 +41,10 @@ public class WriteFileBinary : MonoBehaviour
                 {
                     while(true)
                     {
-                        if (points.Count >= 100_000)
-                            break;
+                        //if (pointsBin.Count >= 100_000)
+                        //    break;
                         var v = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                        points.Add(v);
+                        pointsBin.Add(v);
                     }
                 }
                 catch(Exception e)
@@ -51,6 +52,11 @@ public class WriteFileBinary : MonoBehaviour
 
                 }
             }
+        }
+
+        for (int i = 0; i < pointsBin.Count; i += 100_000)
+        {
+            points.Add(pointsBin[i]);
         }
 
         print($"load {points.Count}");
