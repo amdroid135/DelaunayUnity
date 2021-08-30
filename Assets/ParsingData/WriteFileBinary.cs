@@ -54,7 +54,7 @@ public class WriteFileBinary : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < pointsBin.Count; i += 100_000)
+        for (int i = 0; i < pointsBin.Count; i += 30_000)
         {
             points.Add(pointsBin[i]);
         }

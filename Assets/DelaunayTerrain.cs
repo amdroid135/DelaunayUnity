@@ -66,7 +66,7 @@ public class DelaunayTerrain : MonoBehaviour {
         foreach (Vector3 v in vertices)
          //for (int i = 0; i < 90; i++)
         {
-            polygon.Add(new Vertex(v.x + 10f, v.z + 10f));
+            polygon.Add(new Vertex(v.x + 1f, v.z + 1f));
             //Debug.Log(v);
             elevations.Add(v.y - 50f);
         }
@@ -88,7 +88,7 @@ public class DelaunayTerrain : MonoBehaviour {
         Debug.Log(mesh.triangles.Count + " : " + mesh.vertices.Count);
         t = Time.realtimeSinceStartup;
 
-        //MakeMesh(instancing);
+        MakeMesh(instancing);
 
         Debug.Log("total time " + (Time.realtimeSinceStartup - t));
         Debug.Log("total size " + total_size);
