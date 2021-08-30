@@ -30,7 +30,7 @@ public class WriteFileBinary : MonoBehaviour
     public void LoadFiles()
     {
         points.Clear();
-        points = new List<Vector3>(70_000_000);
+        points = new List<Vector3>(100_000_000);
 
         if (File.Exists(fileName))
         {
@@ -40,6 +40,8 @@ public class WriteFileBinary : MonoBehaviour
                 {
                     while(true)
                     {
+                        if (points.Count >= 100_000)
+                            break;
                         var v = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                         points.Add(v);
                     }

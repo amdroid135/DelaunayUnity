@@ -60,16 +60,15 @@ public class DelaunayTerrain : MonoBehaviour {
 
         elevations = new List<float>();
 
-        float y = 50;
         //List<Vector3> vertices = GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices;
         //foreach (Vector3 v in vertices)
         List<Vector3> vertices = GameObject.Find("PointCreator").GetComponent<PointCreater>().vertices;
         foreach (Vector3 v in vertices)
          //for (int i = 0; i < 90; i++)
         {
-            polygon.Add(new Vertex(v.x, v.z));
+            polygon.Add(new Vertex(v.x + 10f, v.z + 10f));
             //Debug.Log(v);
-            elevations.Add(v.y - y);
+            elevations.Add(v.y - 50f);
         }
 
         Debug.Log("point scrap " + (Time.realtimeSinceStartup - t));

@@ -51,6 +51,7 @@ public class TriangleBin
         int binX = (int)Math.Floor(vertex.x / binsize);
         int binY = (int)Math.Floor(vertex.y / binsize);
 
+        UnityEngine.Debug.Log($"{grid.Length} {binX} {binY}");
         if (grid[binX, binY] == null) {
             grid[binX, binY] = new List<Vertex>();
         }
